@@ -31,6 +31,33 @@ def get_relative_freqs(text: list):
     return bigram_freqs
 
 
+def get_bigram_probs(text: list):
+    """ Get bigram frequencies for the provided text.
+
+    Args:
+    text -- A `list` containing the tokenized text to be
+            used to calculate the frequencies of bigrams
+    """
+    bigram_probs = dict()
+    unigram_probs = dict()
+    for i in range(len(text) - 1):
+        w1 = text[i]
+        w2 = text[i + 1]
+        bigram = (w1, w2)
+        if bigram in bigram_probs:
+            bigram_probs[bigram] += 1
+        else:
+            bigram_probs[bigram] = 1
+        if w1 in unigram_probs:
+            unigram_probs[w1] += 1
+        else:
+            unigram_probs[w1] = 1
+
+    for bigram in bigram_probs:
+        bigram_probs[bigram] /= unigram_probs[bigram[0]]
+    return bigram_probs
+
+
 def get_top_n_probabilities(text: list, context_words: Union[str, list], n: int):
     """Get top `n` following words to `context_words` and their probabilities
 
