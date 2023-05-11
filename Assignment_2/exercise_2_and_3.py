@@ -83,9 +83,18 @@ def get_top_n_probabilities(text: list, context_words: Union[str, list], n: int)
     return top_n
 
 
-def get_entropy(top_n_dict: dict):
+def get_entropy(top_n_dict: dict, relative_freqs):
     """Get entropy of distribution of top `n` bigrams"""
-    raise NotImplementedError
+    entropy_dict = dict()
+    for word in top_n_dict:
+        relative_freqs_filtered = []
+        for bigram, probs in relative_freqs:
+            if bigram in top_n_dict[word]:
+                relative_freqs_filtered.append((bigram, probs))
+        word_cond_probs = np.array([p[1] for p in top_n_dict[word]])
+        relative_freqs_array = np.array([f[1] for f in relative_freqs_filtered])
+        entropy_dict[word] = np.sum(np.multiply(relative_freqs_array, np.log2(word_cond_probs)))
+    raise entropy_dict
 
 
 def plot_top_n(top_n_dict: dict):
