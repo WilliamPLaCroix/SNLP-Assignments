@@ -6,15 +6,12 @@ import numpy as np
 import pandas as pd
 from nltk import FreqDist, bigrams
 from nltk.corpus import brown
+from math import exp
 
 
 def load_corpus():
     """Load `Brown` corpus from NLTK"""
     return [word.lower() for word in brown.words()]
-
-
-def get_conditional_freqs(text: list):
-    raise NotImplementedError
 
 
 def get_relative_freqs(text: list):
@@ -89,12 +86,12 @@ def get_entropy(top_n_dict: dict, relative_freqs):
     for word in top_n_dict:
         relative_freqs_filtered = []
         for bigram, probs in relative_freqs:
-            if bigram in top_n_dict[word]:
+            if bigram in [b[0] for b in top_n_dict[word]]:
                 relative_freqs_filtered.append((bigram, probs))
         word_cond_probs = np.array([p[1] for p in top_n_dict[word]])
         relative_freqs_array = np.array([f[1] for f in relative_freqs_filtered])
-        entropy_dict[word] = np.sum(np.multiply(relative_freqs_array, np.log2(word_cond_probs)))
-    raise entropy_dict
+        entropy_dict[word] = - np.sum(np.multiply(relative_freqs_array, np.log2(word_cond_probs)))
+    return entropy_dict
 
 
 def plot_top_n(top_n_dict: dict):
@@ -113,8 +110,18 @@ def plot_top_n(top_n_dict: dict):
         plt.show()
 
 
-def get_perplexity():
-    raise NotImplementedError
+def get_perplexity(phrases, relative_freqs, cond_freqs):
+    relative_freqs_filtered = []
+    cond_freqs_filtered = []
+    for phrase in phrases:
+        bigram = tuple(phrase.split())
+        for r_freq in relative_freqs:
+            if r_freq[0] == bigram:
+                relative_freqs_filtered.append(r_freq[1])
+        if bigram in cond_freqs:
+            cond_freqs_filtered.append(cond_freqs[bigram])
+
+    return exp(-np.sum(np.multiply(relative_freqs_filtered, np.log2(cond_freqs_filtered))))
 
 
 def get_mean_rank(bigram_list: list, text: list):
