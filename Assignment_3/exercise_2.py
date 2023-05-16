@@ -13,5 +13,28 @@ def get_encoding(alphabet: dict, base: int = 2) -> dict:
     Returns a `dict` with alphabet items in its keys and the encoding as the
     values, e.g. {'a': '0', 'b': '1'}
     """
-    raise NotImplementedError
+    counter = 0
+    code_dict = dict()
+    encoding_set = set()
+    alphabet_list = list(alphabet.items())
+    alphabet_list = sorted(alphabet_list, key=lambda x: x[1])
+    for i, (a, p) in enumerate(alphabet_list):
+        if i == len(alphabet_list) - 1:
+            code_dict[a] = toBase(counter - 1)
+            return code_dict
+        while has_prefix(toBase(counter), encoding_set):
+            counter += 1
+        code_dict[a] = toBase(counter)
+        encoding_set.add(toBase(counter))
+        counter += base
 
+
+def has_prefix(string, strings):
+    for s in strings:
+        if string.startswith(s):
+            return True
+    return False
+
+
+def toBase(x, base=2):
+    return bin(x)
