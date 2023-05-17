@@ -20,14 +20,14 @@ def get_encoding(alphabet: dict, base: int = 2) -> dict:
     alphabet_list = sorted(alphabet_list, key=lambda x: x[1])
     for i, (a, p) in enumerate(alphabet_list):
         if i == len(alphabet_list) - 1:
-            code_dict[a] = toBase(counter - 1)
+            code_dict[a] = toBase(counter - 1)[2:] # sliced the '0b' prefix off the bin() numbers
             return code_dict
         while has_prefix(toBase(counter), encoding_set):
             counter += 1
-        code_dict[a] = toBase(counter)
+        code_dict[a] = toBase(counter)[2:] # sliced the '0b' prefix off the bin() numbers
         encoding_set.add(toBase(counter))
         counter += base
-
+    return code_dict # added final return case to fix a linter error
 
 def has_prefix(string, strings):
     for s in strings:
