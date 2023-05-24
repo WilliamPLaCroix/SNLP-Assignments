@@ -48,7 +48,7 @@ def make_vocab(corpus, top_n):
                 vocab[word] += 1
             else:
                 vocab[word] = 1
-    vocab_sorted = sorted(list(vocab.items()), key=lambda x: x[1], reverse=True)[top_n:]
+    vocab_sorted = sorted(list(vocab.items()), key=lambda x: x[1], reverse=True)[:top_n]
 
     return [v[0] for v in vocab_sorted]
 
