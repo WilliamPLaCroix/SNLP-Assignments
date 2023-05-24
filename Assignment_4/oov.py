@@ -58,4 +58,14 @@ def restrict_vocab(corpus, vocab):
   Input: corpus - List[List[str]]
          vocab  - List[str]
   Output: Vocabulary_restricted_corpus - List[List[str]]'''
-    raise NotImplementedError
+    corpus_restrict = []
+    for sent in corpus:
+        sent_restrict = []
+        for word in sent:
+            if word not in vocab:
+                sent_restrict.append("<unk>")
+            else:
+                sent_restrict.append(word)
+        corpus_restrict.append(sent_restrict)
+
+    return corpus_restrict
