@@ -36,7 +36,10 @@ class BigramModel:
     def ngram_counter(self, sents: "list[list[str]]", n: int) -> dict:
         """returns a dict containing counts of n-grams from a given set"""
         ngram_counts = Counter()
+            
         for sent in sents:
+            if n == 1:
+                sent = sent[:-1]
             ngram_counts.update(list(ngrams(sent, n)))
         return Counter(dict(ngram_counts.most_common()))
 
