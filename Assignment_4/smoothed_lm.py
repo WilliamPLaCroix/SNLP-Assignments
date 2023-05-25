@@ -36,7 +36,7 @@ class BigramModel:
     def ngram_counter(self, sents: "list[list[str]]", n: int) -> dict:
         """returns a dict containing counts of n-grams from a given set"""
         ngram_counts = Counter()
-            
+
         for sent in sents:
             if n == 1:
                 sent = sent[:-1]
@@ -53,8 +53,8 @@ class BigramModel:
         try:
             return log(numerator / denominator)
         except ValueError:
-            return 1
-
+            return -100000000000000000000000000000000
+        
     def perplexity(self):
         """returns the average perplexity of the language model for the test corpus"""
         # PP = exp(-sum(f(w,h)*log(P(w|h)))
