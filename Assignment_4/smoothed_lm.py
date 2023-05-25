@@ -38,18 +38,14 @@ class BigramModel:
         ngram_counts = Counter()
         for sent in sents:
             ngram_counts.update(list(ngrams(sent, n)))
-        return dict(ngram_counts.most_common())
+        return Counter(dict(ngram_counts.most_common()))
 
     def logprob(self, bigram: tuple) -> float:
         """returns the log proabability of a bigram. Adjust this function for Laplace Smoothing"""
         # PLaplace(w_n|w_n-1) = (C(w_n-1,w_n) + alpha)
         #                       (C(w_n-1) + alpha * V)
         # V = size of vocabulary = len(unigram counts)
-        try:
-            numerator = self.train_bigram_counts[bigram] + self.alpha
-        except KeyError:
-            numerator = self.alpha
-
+        numerator = self.train_bigram_counts[bigram] + self.alpha
         denominator = self.train_unigram_counts[(bigram[0],)] + self.alpha * len(self.train_unigram_counts)
         try:
             return log(numerator / denominator)
