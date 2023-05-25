@@ -49,8 +49,12 @@ class BigramModel:
             numerator = self.train_bigram_counts[bigram] + self.alpha
         except KeyError:
             numerator = self.alpha
+
         denominator = self.train_unigram_counts[(bigram[0],)] + self.alpha * len(self.train_unigram_counts)
-        return log(numerator / denominator)
+        try:
+            return log(numerator / denominator)
+        except ValueError:
+            return 1
 
     def perplexity(self):
         """returns the average perplexity of the language model for the test corpus"""
