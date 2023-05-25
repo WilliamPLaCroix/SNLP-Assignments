@@ -2,6 +2,7 @@ from collections import defaultdict, Counter
 import nltk
 import string
 import re
+import matplotlib.pyplot as plt
 
 nltk.download('treebank')
 
@@ -69,3 +70,29 @@ def restrict_vocab(corpus, vocab):
         corpus_restrict.append(sent_restrict)
 
     return corpus_restrict
+
+
+def oov_rate(corpus, oov_token="<unk>"):
+    oov_count = 0
+    corpus_len = len(list(flatten(corpus)))
+    for sent in corpus:
+        for word in sent:
+            if word == oov_token:
+                oov_count += 1
+    return oov_count / corpus_len
+
+
+def plot_oov_rate(rates):
+    plt.figure("plot")
+    plt.loglog(rates)
+
+
+# from assignment 3
+def flatten(lst):
+    """flatten trees/nested lists"""
+    for item in lst:
+        if isinstance(item, list):
+            for nested_item in flatten(item):
+                yield nested_item
+        else:
+            yield item
