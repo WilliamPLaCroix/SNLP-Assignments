@@ -89,7 +89,6 @@ class InterpolatedModel():
         self.order: int = order
         self.alpha: float = alpha
         self.train_ngram_counts, self.test_ngram_counts = self.set_ngram_counts(order)
-
     
     def ngram_counter(self, sents: "list[list[str]]", order: int) -> "dict[tuple[str, str], int]":
         """
