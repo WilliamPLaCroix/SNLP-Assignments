@@ -20,9 +20,12 @@ def load_and_preprocess_data() -> "list[list[str]]":
     """
     corpus = list(nltk.corpus.treebank.sents())
     # Remove punctuation and lowercase, removing empty tokens after cleaning
+    # for sent in sents: # Remove sentences with only one word. Not sure if we'll need this.
+    #     if len(sent) == 1:
+    #         corpus.remove(sent)
     return [" ".join(sent).lower().translate(str.maketrans('', '', string.punctuation)).split() for sent in corpus]
 
-class Interpolated_Model():
+class InterpolatedModel():
     """#TODO"""
 #Complete this class
     def _init_(self, args):
