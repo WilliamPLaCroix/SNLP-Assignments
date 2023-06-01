@@ -45,7 +45,7 @@ def make_vocab(corpus: "list[list[str]]", top_n: int) -> "list[str]":
 
     return [v[0] for v in vocab_sorted]
 
-def restrict_vocab(corpus: "list[list[str]]") -> "list[list[str]]":
+def restrict_vocab(corpus: "list[list[str]]", V=5000) -> "list[list[str]]":
     """
     Restricts the vocabulary of the given corpus to a specified size.
     Args:
@@ -55,7 +55,7 @@ def restrict_vocab(corpus: "list[list[str]]") -> "list[list[str]]":
         list[list[str]]: The restricted corpus, where words not present in the vocabulary are
             replaced with "<unk>".
     """
-    vocab: "list[str]" = make_vocab(corpus, 5000)
+    vocab: "list[str]" = make_vocab(corpus, V)
     corpus_restrict: "list[list[str]]" = []
     for sent in corpus:
         sent_restrict: "list[str]" = []
