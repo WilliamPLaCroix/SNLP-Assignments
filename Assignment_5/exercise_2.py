@@ -75,7 +75,7 @@ def lamda_w2(w2, d, unigram_counts, w2o_counts):
 
 def P_KN_w3(w3, unigram_counts, ow3_counts):
     if w3 in unigram_counts:
-        return ow3_counts[w3] / len(ow3_counts)
+        return ow3_counts[w3] / sum(ow3_counts.values())
     else:
         return 1 / len(unigram_counts)
 
@@ -97,11 +97,20 @@ class TrigramModel:
         self.ow2o_counts = get_ow2o_counts(self.trigram_counts)
 
     def get_lamda_w2(self, w2):
-        return lamda_w2(w2, self.d, self.unigram_counts, self.w2o_counts)
+        output = lamda_w2(w2, self.d, self.unigram_counts, self.w2o_counts)
+        print("lamda_w2: ", w2, output)
+        return output
 
     def get_P_KN_w3(self, w3):
-        return P_KN_w3(w3, self.unigram_counts, self.ow3_counts)
+        output = P_KN_w3(w3, self.unigram_counts, self.ow3_counts)
+        print("P_KN_w3: ", w3, output)
+        return output
 
     def get_P_KN_w3_w2(self, w2, w3):
-        return P_KN_w3_w2(self.d, w2, w3, self.ow3_counts, self.ow2w3_counts, self.ow2o_counts,
-                          self.unigram_counts, self.w2o_counts)
+        output = P_KN_w3_w2(self.d, w2, w3, self.ow3_counts, self.ow2w3_counts, self.ow2o_counts,
+                            self.unigram_counts, self.w2o_counts)
+        print("P_KN_w3_w2: ", w3, w2, output)
+        return output
+
+    def add_1_bigram_probs(self, w1, w2):
+        return (self.bigram_counts[(w1, w2)] + 1) / (self.unigram_counts[w2] + len(self.unigram_counts))
