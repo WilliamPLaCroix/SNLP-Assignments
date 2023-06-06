@@ -4,6 +4,21 @@ import string
 
 import nltk
 import pandas as pd
+import sklearn.feature_extraction.text as sklfe
+import sklearn.metrics
+from numpy import ndarray
+
+
+def confusion_matrix(y_true: "list[int]", y_pred: "list[int]|ndarray") -> "ndarray":
+    """
+    Create a confusion matrix from two lists of labels.
+    Args:
+        y_true (list[int]): The true labels.
+        y_pred (list[int]): The predicted labels.
+    Returns:
+        ndarray: The confusion matrix.
+    """
+    return sklearn.metrics.confusion_matrix(y_true, y_pred)
 
 
 def load_and_preprocess_data(path: str, remove_punct: bool, lowercase: bool) -> "list[list[str]]":
@@ -21,6 +36,12 @@ def load_and_preprocess_data(path: str, remove_punct: bool, lowercase: bool) -> 
         corpus.append(" ".join(" ".join(sent).split()))
     dataframe[1] = corpus
     return dataframe
+
+def vectorize_set(corpus: "list[list[str]]") -> "tuple[ndarray[spmatrix]": # type:ignore
+    # encode sentences as one-hot vectors using scikit-learn's one_hot function OHE
+    vectorizer = sklfe.CountVectorizer()
+    return vectorizer.fit_transform(corpus).toarray() # type: ignore
+ 
 
 def train_test_split(corpus: "list[list[str]]", train_ratio: float = 0.8) -> "tuple[list[list[str]], list[list[str]]]":
     """
