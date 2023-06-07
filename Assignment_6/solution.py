@@ -43,23 +43,29 @@ def load_and_preprocess_data(path: str="./all-data.csv", remove_punct: bool=True
     dataframe[1] = corpus
     return dataframe
 
-def ngramize_corpus(corpus: "list[str]", n: int=2) -> "list[str]": 
+def ngramize_corpus(corpus: "list[list[str]]", n: int=2) -> "list[list[tuple[str]]]": 
     """#TODO"""
     raise NotImplementedError
 
-def polarize_corpus(corpus: "list[str]") -> "list[int]":
+def polarize_corpus(corpus: "list[list[str]]") -> "list[int]":
     """#TODO"""
     raise NotImplementedError
  
-def remove_stopwords(corpus: "list[str]") -> "list[str]":
+def remove_stopwords(corpus: "list[list[str]]") -> "list[list[str]]":
     """#TODO"""
     raise NotImplementedError
 
-def replace_labels_with_numbers(corpus):
-    
-    corpus[0] = corpus[0].replace("positive", 2)
-    corpus[0] = corpus[0].replace("neutral", 1)
-    corpus[0] = corpus[0].replace("negative", 0)
+def replace_labels_with_numbers(corpus: "list[str]") -> "list[str]":
+    """
+    Replace labels in the corpus with numerical representations.
+    Args:
+        corpus (List[str]): The corpus containing labeled data.
+    Returns:
+        List[str]: The corpus with labels replaced by their corresponding numerical representations.
+    """
+    corpus[0] = corpus[0].replace("positive", 2) # type: ignore
+    corpus[0] = corpus[0].replace("neutral", 1) # type: ignore
+    corpus[0] = corpus[0].replace("negative", 0)   # type: ignore
     return corpus
 
 def test(confusion_matrix: "pd.DataFrame", classifier: str, preprocessing: str) -> None:
