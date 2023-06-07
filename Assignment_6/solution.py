@@ -6,9 +6,14 @@ import sklearn.feature_extraction.text as sklfe
 import sklearn.metrics
 from numpy import ndarray
 from sklearn.model_selection import train_test_split
+from nltk.corpus import stopwords
+from nltk import ngrams
+
+nltk.download('stopwords')
+stopWords = set(stopwords.words('english'))
 
 
-def confusion_matrix(y_true: "list[int]", y_pred: "list[int]|ndarray"): # -> "ndarray":
+def confusion_matrix(y_true: "list[int]", y_pred: "list[int]|ndarray"):  # -> "ndarray":
     """
     Create a confusion matrix from two lists of labels.
     Args:
@@ -20,7 +25,9 @@ def confusion_matrix(y_true: "list[int]", y_pred: "list[int]|ndarray"): # -> "nd
     return pd.crosstab(y_true, y_pred, rownames=['True'], colnames=['Predicted'], margins=True)
     # return sklearn.metrics.confusion_matrix(y_true, y_pred)
 
-def load_and_preprocess_data(path: str="./all-data.csv", remove_punct: bool=True, lowercase: bool=True) -> "list[list[str]]":
+
+def load_and_preprocess_data(path: str = "./all-data.csv", remove_punct: bool = True, lowercase: bool = True,
+                             remove_stopwords=False) -> "list[list[str]]":
     """
     Load and preprocess data from a CSV file.
     Args:
@@ -43,17 +50,55 @@ def load_and_preprocess_data(path: str="./all-data.csv", remove_punct: bool=True
     dataframe[1] = corpus
     return dataframe
 
-def ngramize_corpus(corpus: "list[list[str]]", n: int=2) -> "list[list[tuple[str]]]": 
-    """#TODO"""
-    raise NotImplementedError
 
-def polarize_corpus(corpus: "list[list[str]]") -> "list[int]":
+def load_loughlan_dict(path):
+    sem_df = pd.read_csv(path)
+    sem_df["Word"] = sem_df["Word"].str.lower()
+    sem_dict = sem_df.set_index("Word").to_dict("index")
+    return sem_dict
+
+
+def ngramize_corpus(corpus: "list[list[str]]", n: int = 2) -> "list[list[tuple[str]]]":
     """#TODO"""
-    raise NotImplementedError
- 
+    corpus_new = []
+    for sent in corpus:
+        sent_new = list(ngrams(sent, n=n))
+        corpus_new.append(sent_new)
+    return corpus_new
+
+
+def polarize_corpus(corpus: "list[list[str]]", sem_dict) -> "list[list[int]]":
+    """#TODO"""
+    corpus_new = []
+    for sent in corpus:
+        sent_new = []
+        for w in sent:
+            try:
+                word_pol = sem_dict[w]
+                if word_pol["Positive"] != "0":
+                    sent_new.append(2)
+                elif word_pol["Negative"] != "0":
+                    sent_new.append(0)
+                else:
+                    sent_new.append(1)
+            except KeyError:
+                sent_new.append(1)
+        corpus_new.append(sent_new)
+    return corpus_new
+
+
 def remove_stopwords(corpus: "list[list[str]]") -> "list[list[str]]":
     """#TODO"""
-    raise NotImplementedError
+    corpus_new = []
+    for sent in corpus:
+        sent_new = []
+        for w in sent:
+            if w not in stopWords:
+                sent_new.append(w)
+        corpus_new.append(sent_new)
+
+    return corpus_new
+
 
 def replace_labels_with_numbers(corpus: "list[str]") -> "list[str]":
     """
@@ -63,10 +108,11 @@ def replace_labels_with_numbers(corpus: "list[str]") -> "list[str]":
     Returns:
         List[str]: The corpus with labels replaced by their corresponding numerical representations.
     """
-    corpus[0] = corpus[0].replace("positive", 2) # type: ignore
-    corpus[0] = corpus[0].replace("neutral", 1) # type: ignore
-    corpus[0] = corpus[0].replace("negative", 0)   # type: ignore
+    corpus[0] = corpus[0].replace("positive", 2)  # type: ignore
+    corpus[0] = corpus[0].replace("neutral", 1)  # type: ignore
+    corpus[0] = corpus[0].replace("negative", 0)  # type: ignore
     return corpus
+
 
 def test(confusion_matrix: "pd.DataFrame", classifier: str, preprocessing: str) -> None:
     """
@@ -83,7 +129,7 @@ def test(confusion_matrix: "pd.DataFrame", classifier: str, preprocessing: str) 
         TN = confusion_matrix[0][0]
         FP = confusion_matrix[0][2] + confusion_matrix[1][2]
         FN = confusion_matrix[1][0] + confusion_matrix[2][0]
-    else: # classifier == 'Naive Bayes':
+    else:  # classifier == 'Naive Bayes':
         TP = confusion_matrix['positive']['positive']
         TN = confusion_matrix['negative']['negative']
         FP = confusion_matrix['negative']['positive'] + confusion_matrix['neutral']['positive']
@@ -104,7 +150,9 @@ def test(confusion_matrix: "pd.DataFrame", classifier: str, preprocessing: str) 
     print(f"{preprocessing} {classifier} F1:", f1)
     return None
 
-def train_and_fit_model(corpus: "tuple[list[str|int], list[str]]", classification_model) -> "tuple[list[int], list[int]]":
+
+def train_and_fit_model(corpus: "tuple[list[str|int], list[str]]",
+                        classification_model) -> "tuple[list[int], list[int]]":
     """
     Trains and fits a classification model using a given corpus.
 
@@ -117,12 +165,14 @@ def train_and_fit_model(corpus: "tuple[list[str|int], list[str]]", classificatio
     """
     corpus_features = vectorize_set(corpus[1])
     corpus_labels = corpus[0]
-    X_train, X_test, y_train, y_test = train_test_split(corpus_features, corpus_labels, test_size=0.2)#, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(corpus_features, corpus_labels,
+                                                        test_size=0.2)  # , random_state=42)
     model = classification_model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
     return y_test, y_pred
 
-def vectorize_set(corpus: "list[str]") -> "tuple[ndarray[spmatrix]]": # type: ignore
+
+def vectorize_set(corpus: "list[str]") -> "tuple[ndarray[spmatrix]]":  # type: ignore
     """
     Vectorizes a given corpus using scikit-learn's CountVectorizer.
     Args:
@@ -132,7 +182,7 @@ def vectorize_set(corpus: "list[str]") -> "tuple[ndarray[spmatrix]]": # type: ig
     """
     # encode sentences as one-hot vectors using scikit-learn's one_hot function OHE
     vectorizer = sklfe.CountVectorizer()
-    return vectorizer.fit_transform(corpus) # type: ignore
+    return vectorizer.fit_transform(corpus)  # type: ignore
 
 # def train_test_split(corpus: "list[list[str]]", train_ratio: float = 0.8) -> "tuple[list[list[str]], list[list[str]]]":
 #     """
