@@ -9,7 +9,7 @@ from nltk.corpus import stopwords
 from numpy import ndarray
 from sklearn.model_selection import train_test_split
 
-nltk.download('stopwords')
+# nltk.download('stopwords')
 
 
 def confusion_matrix(y_true: "list[int]|ndarray", y_pred: "list[int]|ndarray"): # -> "ndarray":
@@ -50,9 +50,9 @@ def load_and_preprocess_data(path: str="./all-data.csv", ngramize: int=0, polari
         sent = [word.lower() for word in sent]
         corpus.append(" ".join(" ".join(sent).split()))
     if remove_stops:
-        corpus = remove_stopwords(corpus)   
+        corpus = remove_stopwords(corpus)  
     if polarize:
-        corpus = polarize_corpus(corpus, load_loughlan_dict(path))
+        corpus = polarize_corpus(corpus, load_loughlan_dict())
     if ngramize != 0:
         corpus = ngramize_corpus(corpus, ngramize)
     dataframe[0] = replace_labels_with_numbers(dataframe[0])
@@ -60,7 +60,7 @@ def load_and_preprocess_data(path: str="./all-data.csv", ngramize: int=0, polari
     return dataframe
 
 
-def load_loughlan_dict(path: str) -> "dict[str, dict[str, str]]":
+def load_loughlan_dict(path: str="./LoughlanMcDonald.csv") -> "dict[str, dict[str, str]]":
     """
     Load the Loughran-McDonald sentiment dictionary from the given CSV file.
 
@@ -71,7 +71,7 @@ def load_loughlan_dict(path: str) -> "dict[str, dict[str, str]]":
         Dict[str, Dict[str, str]]: A nested dictionary representing the sentiment dictionary,
         where each word is mapped to its corresponding sentiment polarity.
     """
-    sem_df = pd.read_csv(path)
+    sem_df = pd.read_csv(path, encoding = "ISO-8859-1")
     sem_df["Word"] = sem_df["Word"].str.lower()
     sem_dict = sem_df.set_index("Word").to_dict("index")
     return sem_dict
@@ -111,14 +111,14 @@ def polarize_corpus(corpus: "list[list[str]]", sem_dict) -> "list[list[int]]":
             try:
                 word_pol = sem_dict[w]
                 if word_pol["Positive"] != "0":
-                    sent_new.append(2)
+                    sent_new.append("2")
                 elif word_pol["Negative"] != "0":
-                    sent_new.append(0)
+                    sent_new.append("0")
                 else:
-                    sent_new.append(1)
+                    sent_new.append("1")
             except KeyError:
-                sent_new.append(1)
-        corpus_new.append(sent_new)
+                sent_new.append("1")
+        corpus_new.append(" ".join(sent_new))
     return corpus_new
 
 
