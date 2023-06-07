@@ -55,7 +55,12 @@ def remove_stopwords(corpus: "list[str]") -> "list[str]":
     """#TODO"""
     raise NotImplementedError
 
-
+def replace_labels_with_numbers(corpus):
+    
+    corpus[0] = corpus[0].replace("positive", 2)
+    corpus[0] = corpus[0].replace("neutral", 1)
+    corpus[0] = corpus[0].replace("negative", 0)
+    return corpus
 
 def test(confusion_matrix: "pd.DataFrame", classifier: str, preprocessing: str) -> None:
     """
