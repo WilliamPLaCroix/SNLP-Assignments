@@ -43,18 +43,20 @@ def load_and_preprocess_data(path: str="./all-data.csv", remove_punct: bool=True
     dataframe[1] = corpus
     return dataframe
 
-def vectorize_set(corpus: "list[str]") -> "tuple[ndarray[spmatrix]]": # type: ignore
-    """
-    Vectorizes a given corpus using scikit-learn's CountVectorizer.
-    Args:
-        corpus (List[str]): A list of sentences or texts to be vectorized.
-    Returns:
-        Tuple[ndarray[spmatrix]]: A tuple containing the vectorized representation of the corpus.
-    """
-    # encode sentences as one-hot vectors using scikit-learn's one_hot function OHE
-    vectorizer = sklfe.CountVectorizer()
-    return vectorizer.fit_transform(corpus) # type: ignore
+def ngramize_corpus(corpus: "list[str]", n: int=2) -> "list[str]": 
+    """#TODO"""
+    raise NotImplementedError
+
+def polarize_corpus(corpus: "list[str]") -> "list[int]":
+    """#TODO"""
+    raise NotImplementedError
  
+def remove_stopwords(corpus: "list[str]") -> "list[str]":
+    """#TODO"""
+    raise NotImplementedError
+
+
+
 def test(confusion_matrix: "pd.DataFrame", classifier: str, preprocessing: str) -> None:
     """
     Calculate and print evaluation metrics based on the provided confusion matrix.
@@ -108,6 +110,18 @@ def train_and_fit_model(corpus: "tuple[list[str|int], list[str]]", classificatio
     model = classification_model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
     return y_test, y_pred
+
+def vectorize_set(corpus: "list[str]") -> "tuple[ndarray[spmatrix]]": # type: ignore
+    """
+    Vectorizes a given corpus using scikit-learn's CountVectorizer.
+    Args:
+        corpus (List[str]): A list of sentences or texts to be vectorized.
+    Returns:
+        Tuple[ndarray[spmatrix]]: A tuple containing the vectorized representation of the corpus.
+    """
+    # encode sentences as one-hot vectors using scikit-learn's one_hot function OHE
+    vectorizer = sklfe.CountVectorizer()
+    return vectorizer.fit_transform(corpus) # type: ignore
 
 # def train_test_split(corpus: "list[list[str]]", train_ratio: float = 0.8) -> "tuple[list[list[str]], list[list[str]]]":
 #     """
