@@ -41,7 +41,6 @@ def load_and_preprocess_data(path: str="./all-data.csv", remove_punct: bool=True
         sent = [word.lower() for word in sent]
         corpus.append(" ".join(" ".join(sent).split()))
     dataframe[1] = corpus
-    print(dataframe.head())
     return dataframe
 
 def vectorize_set(corpus: "list[str]") -> "tuple[ndarray[spmatrix]]": # type: ignore
@@ -54,7 +53,7 @@ def vectorize_set(corpus: "list[str]") -> "tuple[ndarray[spmatrix]]": # type: ig
     """
     # encode sentences as one-hot vectors using scikit-learn's one_hot function OHE
     vectorizer = sklfe.CountVectorizer()
-    return vectorizer.fit_transform(corpus).toarray() # type: ignore
+    return vectorizer.fit_transform(corpus) # type: ignore
  
 def test(confusion_matrix: "pd.DataFrame", classifier: str, preprocessing: str) -> None:
     """
@@ -106,8 +105,8 @@ def train_and_fit_model(corpus: "tuple[list[str|int], list[str]]", classificatio
     corpus_features = vectorize_set(corpus[1])
     corpus_labels = corpus[0]
     X_train, X_test, y_train, y_test = train_test_split(corpus_features, corpus_labels, test_size=0.2)#, random_state=42)
-
-    y_pred = classification_model.fit(X_train, y_train).predict(X_test)
+    model = classification_model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
     return y_test, y_pred
 
 # def train_test_split(corpus: "list[list[str]]", train_ratio: float = 0.8) -> "tuple[list[list[str]], list[list[str]]]":
