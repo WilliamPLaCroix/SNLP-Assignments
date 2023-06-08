@@ -132,12 +132,20 @@ def remove_stopwords(corpus: "list[str]") -> "list[str]":
     """
     stopword_set = set(stopwords.words('english'))
     cleaned_corpus = []
+    rm_stopword_count = 0
+    total_word_count = 0
     for sentence in corpus:
         new_sentence = []
         for word in sentence.split():
+            total_word_count += 1
             if word not in stopword_set:
                 new_sentence.append(word)
-        cleaned_corpus.append(" ".join(new_sentence)) 
+            else:
+                rm_stopword_count += 1
+        cleaned_corpus.append(" ".join(new_sentence))
+    print("total word count:", total_word_count)
+    print("removed stopword count:", rm_stopword_count)
+    print("ratio", rm_stopword_count/total_word_count)
     return cleaned_corpus
 
 
