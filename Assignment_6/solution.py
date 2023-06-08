@@ -60,7 +60,7 @@ def load_and_preprocess_data(path: str="./all-data.csv", ngramize: int=1, polari
     return dataframe
 
 
-def load_loughlan_dict(path: str="./LoughlanMcDonald.csv") -> "dict[str, dict[str, str]]":
+def load_loughlan_dict(path: str="./Loughran-McDonald_MasterDictionary_1993-2021.csv") -> "dict[str, dict[str, str]]":
     """
     Load the Loughran-McDonald sentiment dictionary from the given CSV file.
     Args:
