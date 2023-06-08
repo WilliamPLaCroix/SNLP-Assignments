@@ -24,7 +24,7 @@ def calculate_confusion_matrix(y_true: "np.ndarray", y_pred: "np.ndarray") -> "p
     indexes_to_sentiments: dict = {"2": "Positive", "1": "Neutral", "0": "Negative"}
     y_pred = np.array([indexes_to_sentiments[str(elem)] for elem in y_pred])
     y_true = np.array([indexes_to_sentiments[str(elem)] for elem in y_true])
-    return (pd.crosstab(y_true, y_pred, rownames=['True'], colnames=['Predicted'], margins=True)
+    return (pd.crosstab(y_true, y_pred, rownames=['True'], colnames=['Predicted'])
             .reindex(columns=["Negative", "Neutral", "Positive"],
                        index=["Negative", "Neutral", "Positive"], fill_value=0))
 
@@ -87,8 +87,10 @@ def ngramize_corpus(corpus: "list[str]", order: int = 2) -> "list[str]":
     ngramized_corpus = []
     for sentence in corpus:
         ngramized_sentence = list(ngrams(sentence.split(), n=order))
-        stringed_ngramized_sentence = [str(ngram) for ngram in ngramized_sentence]
-        new_sentence = " ".join(stringed_ngramized_sentence)
+        joined_ngrams: "list[str]" = []
+        for ngram in ngramized_sentence:
+            joined_ngrams.append("".join([word for word in ngram]))
+        new_sentence = " ".join(joined_ngrams)
         ngramized_corpus.append(new_sentence)
     return ngramized_corpus
 
