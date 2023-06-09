@@ -162,7 +162,7 @@ def replace_labels_with_numbers(dataframe: "list[str]") -> "list[str]":
     return dataframe
 
 
-def test(confusion_matrix, classifier: str, preprocessing: str) -> None:
+def test(confusion_matrix, classifier: str, preprocessing: str) -> "dict[str, str|float]":
     """
     Calculate and print evaluation metrics based on the provided confusion matrix.
     Args:
@@ -197,7 +197,7 @@ def test(confusion_matrix, classifier: str, preprocessing: str) -> None:
     else:
         F1 = 2 * (precision * recall) / (precision + recall)
     print(f"{preprocessing} {classifier} F1: {F1:.2f}")
-
+    return {"Model": f"{preprocessing} {classifier}", "Accuracy": accuracy, "Precision": precision, "Recall": recall, "F1": F1}
 
 def train_and_fit_model(corpus: "tuple[list[str|int], list[str]]", classification_model) -> "tuple[list[int], list[int]]":
     """
